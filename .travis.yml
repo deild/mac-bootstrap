@@ -1,0 +1,8 @@
+os: osx
+before_script:
+- brew update
+- brew install shellcheck
+script:
+- shellcheck bootstrap
+- shellcheck macos-defaults
+- sh bootstrap

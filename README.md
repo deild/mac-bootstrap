@@ -40,7 +40,7 @@ curl -fsSO https://raw.githubusercontent.com/deild/mac-bootstrap/master/bootstra
 && sh bootstrap 2>&1 | tee ~/bootstrap.log
 ```
 
-## Qu'est-ce que ça fait ?
+## Qu'est-ce que ça fait
 
 Lorsque vous invoquez `bootstrap`, voici ce qu'il fait :
 
