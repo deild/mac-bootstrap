@@ -1,8 +1,10 @@
+language: bash
 os: osx
 before_script:
 - brew update
 - brew install shellcheck
+- brew install shunit2
 script:
 - shellcheck bootstrap
 - shellcheck macos-defaults
-- sh bootstrap
+- echo "master master Europe/Paris localhost n" | sh bootstrap
