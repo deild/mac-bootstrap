@@ -40,17 +40,17 @@ curl -fsSO https://raw.githubusercontent.com/deild/mac-bootstrap/master/bootstra
 && sh bootstrap 2>&1 | tee ~/bootstrap.log
 ```
 
-1. Qu'est-ce que ça fait ?
+## Qu'est-ce que ça fait ?
 
 Lorsque vous invoquez `bootstrap`, voici ce qu'il fait :
 
-- Installe et configure `Homebrew`
-- Verifie la version de Ruby & Gem
-- Installe mes Dotfiles
-- Installe et configure Vim
-- Renseigne le nom de la machine
-- Renseigne le timezone
-- Définit une variété de valeurs par défaut de macOS
+1. Installe et configure `Homebrew`
+1. Vérifie la version de `Ruby` & `Gem`
+1. Installe [mes Dotfiles](https://github.com/deild/dotfiles.git)
+1. Configure `Vim` avec [mes préférences](https://github.com/deild/vimrc.git)
+1. Renseigne le nom de la machine
+1. Renseigne le timezone
+1. Définit une variété de valeurs par défaut de macOS
 
 [screenshot]: https://zupimages.net/up/19/22/k2by.png
 [bootstrap]: https://github.com/deild/mac-bootstrap/blob/master/bootstrap
