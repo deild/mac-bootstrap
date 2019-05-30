@@ -123,7 +123,7 @@ read -p "Continue? (y/n) " -n 1 -r
 printf '\n'
 if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
   printf "Exiting...\\n"
-  exit 1
+  exit 0
 fi
 
 set -e

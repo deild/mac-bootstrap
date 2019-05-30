@@ -7,4 +7,5 @@ before_script:
 script:
 - shellcheck bootstrap
 - shellcheck macos-defaults
-- echo "master master Europe/Paris localhost n" | sh bootstrap
+- echo "master master Europe/Paris ${TRAVIS_OS_NAME} n" | sh bootstrap
+- echo "master master Europe/Paris ${TRAVIS_OS_NAME} y" | sh bootstrap
