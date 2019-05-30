@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  build:
+    macos:
+      xcode: "10.2.1"
+    steps:
+      - checkout
+      - run: brew update
+      - run: brew install shellcheck
+      - run: shellcheck bootstrap
+      - run: shellcheck macos-defaults
+      - run: sh bootstrap
