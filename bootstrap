@@ -12,7 +12,7 @@ bootstrap_echo() {
 }
 
 bootstrap_done() {
-  printf "\\n[BOOTSTRAP] \\e[0;32mDone!\\e[0m\\n"
+  printf "\\n[BOOTSTRAP] \\e[0;32m[✔]\\e[0m\\n"
 }
 
 ################################################################################
@@ -156,11 +156,13 @@ if ! command -v brew >/dev/null; then
 fi
 bootstrap_echo "Updating Homebrew formulae..."
 brew update
-
+brew analytics off
+brew tap "homebrew/bundle"
 brew bundle --file=- <<EOF
 tap "homebrew/cask"
 tap "homebrew/bundle"
 tap "homebrew/core"
+tap 'caskroom/fonts'
 
 brew "bash"
 brew "bash-completion@2"
@@ -220,6 +222,8 @@ cask "visual-studio-code"
 cask "vlc"
 cask "wkhtmltopdf"
 cask "xquartz"
+cask 'font-source-code-pro'
+cask 'font-source-sans-pro'
 EOF
 
 [ -n "$(brew outdated)" ] && brew upgrade
