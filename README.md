@@ -1,56 +1,82 @@
-# Mac Bootstrap
+# Mac Bootstrap [![Build Status](https://travis-ci.org/deild/mac-bootstrap.svg?branch=master)](https://travis-ci.org/deild/mac-bootstrap)
+
+> Your laptop is your sword. Don't go into battle without it.
 
 ![dotfiles screenshot][screenshot]
 
-> Forked & Inspired by from [joshukraine's mac-bootstrap](https://github.com/joshukraine/mac-bootstrap/blob/master/bootstrap)
+> Forked & Inspired by from [joshukraine's mac-bootstrap]
 
-Le but de ce script est de provisionner une nouvelle machine exécutant une nouvelle installation de macOS.
-Il installe et configure les logiciels, les `dotfiles` et les préférences générales que j'utilise.
+The purpose of this script is to provision a new machine running a fresh install of macOS.
 
-Le script [bootstrap] est très spécifique à la plate-forme Mac.
-La version 1.x a été testée avec succès sur les versions suivantes de macOS :
+It can be run multiple times on the same machine safely. It installs, upgrades, or skips packages based on what is already installed on the machine.
+
+The [bootstrap] script is very specific to the Mac platform.
+Version 1.x has been successfully tested on the following versions of macOS:
 
 - Mojave (10.14)
 - High Sierra (10.13)
 
-Les versions plus anciennes peuvent fonctionner mais ne sont pas testées régulièrement. Les rapports de bogues pour les anciennes versions sont les bienvenus.
+Older versions may work but are not tested regularly.
+Bug reports into a new [GitHub Issue] for older versions are welcome.
 
-## Prérequis
+## Install
 
-1. Assurez-vous que votre logiciel est à jour :
-
-```sh
-sudo softwareupdate -i -a --restart
-```
-
-1. Installez les outils en ligne de commande d'Apple :
+Download the script:
 
 ```sh
-xcode-select --install
+curl -fsSO https://raw.githubusercontent.com/deild/mac-bootstrap/master/bootstrap
 ```
 
-1. Redémarrez, vérifiez les mises à jour supplémentaires, puis réinstallez et redémarrez si nécessaire.
+Review the script (avoid running scripts you haven't read!):
 
-## Installation
+```sh
+less bootstrap
+```
 
-Pour installer en une seule ligne, exécutez ceci :
+Execute the downloaded script:
+
+```sh
+sh bootstrap 2>&1 | tee ~/bootstrap.log
+```
+
+Optionally, review the log:
+
+```sh
+less ~/bootstrap.log
+```
+
+Or to install with a one-liner, run this:
 
 ```sh
 curl -fsSO https://raw.githubusercontent.com/deild/mac-bootstrap/master/bootstrap \
 && sh bootstrap 2>&1 | tee ~/bootstrap.log
 ```
 
-## Qu'est-ce que ça fait
+## Debugging
 
-Lorsque vous invoquez `bootstrap`, voici ce qu'il fait :
+Your last bootstrap run will be saved to ~/bootstrap.log.
+Read through it to see if you can debug the issue yourself.
+If not, copy the lines where the script failed into a new [GitHub Issue] for us.
+Or, attach the whole log file as an attachment.
 
-1. Installe et configure `Homebrew`
-1. Vérifie la version de `Ruby` & `Gem`
-1. Installe [mes Dotfiles](https://github.com/deild/dotfiles.git)
-1. Configure `Vim` avec [mes préférences](https://github.com/deild/vimrc.git)
-1. Renseigne le nom de la machine
-1. Renseigne le timezone
-1. Définit une variété de valeurs par défaut de macOS
+## What it sets up
 
+When you invoke `bootstrap`, here's what it does:
+
+- Ensuring Apple's command line tools are installed
+- Checking `Homebrew` and installs a variety of packages
+- Checking which `Ruby` and `Gem` installs we are using
+- Installing [dotfiles](https://github.com/deild/dotfiles.git)
+- Configure & install `Vim` Plugin with [vimrc](https://github.com/deild/vimrc.git)
+- Set computer name
+- Set the timezone
+- Setting macOS [preferences](https://github.com/deild/mac-bootstrap/blob/master/macos-defaults)
+
+## LICENSE
+
+[![MIT](https://img.shields.io/badge/license-MIT-BLUE)](LICENSE)
+
+[joshukraine's mac-bootstrap]: https://github.com/joshukraine/mac-bootstrap/blob/master/bootstrap
 [screenshot]: https://zupimages.net/up/19/22/k2by.png
 [bootstrap]: https://github.com/deild/mac-bootstrap/blob/master/bootstrap
+[GitHub Issue]: https://github.com/deild/mac-bootstrap/issues/new

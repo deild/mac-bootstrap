@@ -45,7 +45,7 @@ only supports macOS. Exiting..."
 fi
 
 ################################################################################
-# Check for presence of command line tools if macOS
+# Check for presence of command line tools
 ################################################################################
 if [ ! -d "${COMMANDLINE_TOOLS}" ]; then
   bootstrap_echo "Apple's command line developer tools must be installed before
@@ -136,6 +136,20 @@ set -e
 # bootstrap_done
 
 ################################################################################
+# Install Apple's Command Line Tools
+################################################################################
+bootstrap_echo "Step $(((step++))): Ensuring Apple's command line tools are installed..."
+# Checks if path to command line tools exist
+# Credit: https://apple.stackexchange.com/questions/219507/best-way-to-check-in-bash-if-command-line-tools-are-installed
+if type xcode-select >&- && xpath=$(xcode-select --print-path) &&
+  test -d "${xpath}" && test -x "${xpath}"; then
+  bootstrap_echo "Apple's command line tools are already installed."
+else
+  bootstrap_echo "Installing Apple's command line tools..."
+  xcode-select --install
+fi
+bootstrap_done
+################################################################################
 # Homebrew
 ################################################################################
 bootstrap_echo "Step $(((step++))): Checking Homebrew..."
@@ -208,7 +222,6 @@ cask "imageoptim"
 cask "iterm2"
 cask "macpass"
 cask "macsvg"
-cask "mactex"
 cask "onyx"
 cask "osxfuse"
 cask "remember-the-milk"
@@ -224,6 +237,8 @@ cask "wkhtmltopdf"
 cask "xquartz"
 cask 'font-source-code-pro'
 cask 'font-source-sans-pro'
+cask 'adoptopenjdk8'
+cask 'basictex'
 EOF
 
 [ -n "$(brew outdated)" ] && brew upgrade
