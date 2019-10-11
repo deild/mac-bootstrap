@@ -150,6 +150,16 @@ else
 fi
 bootstrap_done
 ################################################################################
+# Gatekeeper
+################################################################################
+bootstrap_echo "Step $(((step++))): Gatekeeper control..."
+read -p "Do you want disable Gatekeeper? (y/n) " -n 1 -r
+printf '\n'
+if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
+  sudo spctl --master-disable
+fi
+bootstrap_done
+################################################################################
 # Homebrew
 ################################################################################
 bootstrap_echo "Step $(((step++))): Checking Homebrew..."
@@ -213,20 +223,20 @@ brew "youtube-dl"
 # https://github.com/caskroom/homebrew-cask
 cask "1password"
 cask "appcleaner"
-cask "aquaterm"
+#cask "aquaterm"
 cask "calibre"
-cask "darktable"
+#cask "darktable"
 cask "diffmerge"
 cask "fork"
 cask "imageoptim"
 cask "iterm2"
 cask "macpass"
-cask "macsvg"
+#cask "macsvg"
 cask "onyx"
 cask "osxfuse"
-cask "remember-the-milk"
-cask "slack"
-cask "teamviewer"
+#cask "remember-the-milk"
+#cask "slack"
+#cask "teamviewer"
 cask "the-unarchiver"
 cask "tor-browser"
 cask "veracrypt"
@@ -237,7 +247,7 @@ cask "wkhtmltopdf"
 cask "xquartz"
 cask 'font-source-code-pro'
 cask 'font-source-sans-pro'
-cask 'adoptopenjdk8'
+#cask 'adoptopenjdk8'
 cask 'basictex'
 EOF
 
