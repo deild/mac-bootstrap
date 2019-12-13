@@ -13,6 +13,7 @@ It can be run multiple times on the same machine safely. It installs, upgrades, 
 The [bootstrap] script is very specific to the Mac platform.
 Version 1.x has been successfully tested on the following versions of macOS:
 
+- Catalina (10.15)
 - Mojave (10.14)
 - High Sierra (10.13)
 
