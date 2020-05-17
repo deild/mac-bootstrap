@@ -3,257 +3,29 @@
 ################################################################################
 # bootstrap
 #
-# This script is intended to set up a new Mac computer with my dotfiles and
-# other development preferences.
+# This script is intended to set up a new Mac computer with my homefiles and
+# other preferences.
 ################################################################################
 
+# Thank you, thoughtbot!
 bootstrap_echo() {
-  printf "\\n[BOOTSTRAP] %s\\n" "$@"
+  local fmt="$1"
+  shift
+  # shellcheck disable=SC2059
+  printf "\\n[INFO] $fmt\\n" "$@"
+}
+
+bootstrap_error() {
+  local fmt="$1"
+  shift
+  # shellcheck disable=SC2059
+  printf "\\n[ERROR] $fmt\\n" "$@"
+  exit 1
 }
 
 bootstrap_done() {
-  printf "\\n[BOOTSTRAP] \\e[0;32m[✔]\\e[0m\\n"
+  bootstrap_echo "Step $1 \\e[0;32m[✔]\\e[0m"
 }
-
-################################################################################
-# VARIABLE DECLARATIONS
-################################################################################
-
-export COMMANDLINE_TOOLS="/Library/Developer/CommandLineTools"
-export BOOTSTRAP_REPO_URL="https://github.com/deild/mac-bootstrap.git"
-#export BOOTSTRAP_DIR=$HOME/.mac-bootstrap
-export VIMRC_REPO_URL="https://github.com/deild/vimrc.git"
-export VIMRC_DIR=$HOME/.vim
-export DOTFILES_REPO_URL="https://github.com/deild/dotfiles.git"
-export DOTFILES_DIR=$HOME/.dotfiles
-export OLD_DOTFILES_BACKUP=$HOME/old_dotfiles_backup
-export step='1'
-
-#DEFAULT_BOOTSTRAP_BRANCH="master"
-DEFAULT_DOTFILES_BRANCH="master"
-DEFAULT_VIMRC_BRANCH="master"
-DEFAULT_TIME_ZONE="Europe/Paris"
-ACTUAL_COMPUTER_NAME="$(scutil --get ComputerName)"
-
-################################################################################
-# Make sure we're on a Mac before continuing
-################################################################################
-if [ "$(uname)" != "Darwin" ]; then
-  bootstrap_echo "Oops, it looks like you're using a non-Darwin system. This script
-only supports macOS. Exiting..."
-  exit 1
-fi
-
-################################################################################
-# Check for presence of command line tools
-################################################################################
-if [ ! -d "${COMMANDLINE_TOOLS}" ]; then
-  bootstrap_echo "Apple's command line developer tools must be installed before
-running this script. To install them, just run 'xcode-select --install' from
-the terminal and then follow the prompts. Once the command line tools have been
-installed, you can try running this script again."
-  exit 1
-fi
-
-################################################################################
-# Authenticate
-################################################################################
-if ! sudo -nv &>/dev/null; then
-  printf '=> Enter your password (for sudo access):\n'
-  sudo /usr/bin/true
-  # Keep-alive: update existing `sudo` time stamp until bootstrap has finished
-  while true; do
-    sudo -n /usr/bin/true
-    sleep 60
-    kill -0 "$$" || exit
-  done 2>/dev/null &
-fi
-
-################################################################################
-# Welcome and setup
-################################################################################
-
-printf '\n'
-printf "*************************************************************************\\n"
-printf "*******                                                           *******\\n"
-printf "*******                 Welcome to Mac Bootstrap!                 *******\\n"
-printf "*******                                                           *******\\n"
-printf "*************************************************************************\\n"
-printf '\n'
-
-printf "Before we get started, let's get some info about your setup.\\n"
-
-# printf "\\nBootstrap script will be cloned from:
-# ==> %s.\\n\\n" "$BOOTSTRAP_REPO_URL"
-# printf "Which branch should we use? (Leave blank for default: %s)\\n" "$DEFAULT_BOOTSTRAP_BRANCH"
-# read -r -p "> " BOOTSTRAP_BRANCH
-# export BOOTSTRAP_BRANCH="${BOOTSTRAP_BRANCH:-$DEFAULT_BOOTSTRAP_BRANCH}"
-
-printf "\\nDotfiles will be cloned from:
-==> %s.\\n" "$DOTFILES_REPO_URL"
-printf "Which branch should we use? (Leave blank for default: %s)\\n" "$DEFAULT_DOTFILES_BRANCH"
-read -r -p "> " DOTFILES_BRANCH
-export DOTFILES_BRANCH="${DOTFILES_BRANCH:-$DEFAULT_DOTFILES_BRANCH}"
-
-printf "\\nVimrc will be cloned from:
-==> %s.\\n" "$VIMRC_REPO_URL"
-printf "Which branch should we use? (Leave blank for default: %s)\\n" "$DEFAULT_VIMRC_BRANCH"
-read -r -p "> " VIMRC_BRANCH
-export VIMRC_BRANCH="${VIMRC_BRANCH:-$DEFAULT_VIMRC_BRANCH}"
-
-printf "\\nEnter your desired time zone.
-To view available options run \`sudo systemsetup -listtimezones\`
-(Leave blank for default: %s)\\n" "$DEFAULT_TIME_ZONE"
-read -r -p "> " TIME_ZONE
-export TIME_ZONE=${TIME_ZONE:-$DEFAULT_TIME_ZONE}
-
-printf "\\nEnter your desired computer name for your Mac. (Leave blank for default: %s)\\n" "$ACTUAL_COMPUTER_NAME"
-read -r -p "> " COMPUTER_NAME
-export COMPUTER_NAME="${COMPUTER_NAME:-$ACTUAL_COMPUTER_NAME}"
-
-printf "\\nLooks good. Here's what we've got so far.\\n"
-# printf "Bootstrap branch: ==> [%s]\\n" "$BOOTSTRAP_BRANCH"
-printf "Vimrc branch:     ==> [%s]\\n" "$VIMRC_BRANCH"
-printf "Dotfiles branch:  ==> [%s]\\n" "$DOTFILES_BRANCH"
-printf "Time zone:        ==> [%s]\\n" "$TIME_ZONE"
-printf "Computer name:    ==> [%s]\\n" "$COMPUTER_NAME"
-
-printf '\n'
-read -p "Continue? (y/n) " -n 1 -r
-printf '\n'
-if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
-  printf "Exiting...\\n"
-  exit 0
-fi
-
-set -e
-
-################################################################################
-# Clone mac-bootstrap repo
-################################################################################
-# bootstrap_echo "Cloning mac-bootstrap repo..."
-# git clone --depth 1 "$BOOTSTRAP_REPO_URL" -b "$BOOTSTRAP_BRANCH" "$BOOTSTRAP_DIR"
-# bootstrap_done
-
-################################################################################
-# Install Apple's Command Line Tools
-################################################################################
-bootstrap_echo "Step $(((step++))): Ensuring Apple's command line tools are installed..."
-# Checks if path to command line tools exist
-# Credit: https://apple.stackexchange.com/questions/219507/best-way-to-check-in-bash-if-command-line-tools-are-installed
-if type xcode-select >&- && xpath=$(xcode-select --print-path) &&
-  test -d "${xpath}" && test -x "${xpath}"; then
-  bootstrap_echo "Apple's command line tools are already installed."
-else
-  bootstrap_echo "Installing Apple's command line tools..."
-  xcode-select --install
-fi
-bootstrap_done
-################################################################################
-# Gatekeeper
-################################################################################
-bootstrap_echo "Step $(((step++))): Gatekeeper control..."
-read -p "Do you want disable Gatekeeper? (y/n) " -n 1 -r
-printf '\n'
-if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
-  sudo spctl --master-disable
-fi
-bootstrap_done
-################################################################################
-# Homebrew
-################################################################################
-bootstrap_echo "Step $(((step++))): Checking Homebrew..."
-HOMEBREW_PREFIX="/usr/local"
-if [ -d "$HOMEBREW_PREFIX" ]; then
-  if ! [ -r "$HOMEBREW_PREFIX" ]; then
-    sudo chown -vR "$(whoami):admin" /usr/local
-  fi
-else
-  sudo mkdir "$HOMEBREW_PREFIX"
-  sudo chflags norestricted "$HOMEBREW_PREFIX"
-  sudo chown -vR "$(whoami):admin" "$HOMEBREW_PREFIX"
-fi
-if ! command -v brew >/dev/null; then
-  bootstrap_echo "Installing Homebrew..."
-  curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install | ruby -e
-  export PATH="/usr/local/bin:$PATH"
-fi
-bootstrap_echo "Updating Homebrew formulae..."
-brew update
-brew analytics off
-brew tap "homebrew/bundle"
-brew bundle --file=- <<EOF
-tap "homebrew/cask"
-tap "homebrew/bundle"
-tap "homebrew/core"
-tap 'caskroom/fonts'
-
-brew "bash"
-brew "bash-completion@2"
-brew "bat"
-brew "coreutils"
-brew "curl", link: true
-brew "ffmpeg"
-brew "git-lfs"
-brew "git"
-brew "go"
-brew "htop"
-brew "hugo"
-brew "jrnl"
-brew "ledger"
-brew "ncdu"
-brew "nginx"
-brew "ntfs-3g"
-brew "openssh"
-brew "openssl"
-brew "p7zip"
-brew "pandoc"
-brew "pandoc-citeproc"
-brew "python"
-brew "rsync"
-brew "shellcheck"
-brew "shunit2"
-brew "ssh-copy-id"
-brew "tmux"
-brew "vim"
-brew "wget"
-brew "youtube-dl"
-
-# homebrew-cask
-# https://github.com/caskroom/homebrew-cask
-cask "1password"
-cask "appcleaner"
-#cask "aquaterm"
-cask "calibre"
-#cask "darktable"
-cask "diffmerge"
-cask "fork"
-cask "imageoptim"
-cask "iterm2"
-cask "macpass"
-#cask "macsvg"
-cask "onyx"
-cask "osxfuse"
-#cask "remember-the-milk"
-#cask "slack"
-#cask "teamviewer"
-cask "the-unarchiver"
-cask "tor-browser"
-cask "veracrypt"
-cask "virtualbox"
-cask "visual-studio-code"
-cask "vlc"
-cask "wkhtmltopdf"
-cask "xquartz"
-cask 'font-source-code-pro'
-cask 'font-source-sans-pro'
-#cask 'adoptopenjdk8'
-cask 'basictex'
-EOF
-
-[ -n "$(brew outdated)" ] && brew upgrade
-[ -n "$(brew cask outdated)" ] && brew cask upgrade
-brew cleanup -s
 
 update_shell() {
   # Switch to using brew-installed bash as default shell
@@ -263,69 +35,101 @@ update_shell() {
   fi
 }
 
-case "$SHELL" in
-*/bash)
-  if [ "$(command -v bash)" != "${HOMEBREW_PREFIX}/bin/bash" ]; then
-    update_shell
-  fi
-  ;;
-*)
-  update_shell
-  ;;
-esac
-
-bootstrap_done
-
 ################################################################################
-# Ruby
+# VARIABLE DECLARATIONS
 ################################################################################
-bootstrap_echo "Step $(((step++))): Checking which Ruby and Gem installs we are using at this point..."
-printf "Ruby --> %s\\n" "$(command -v ruby)"
-ruby -v
-printf "Gem --> %s\\n" "$(command -v gem)"
-gem -v
-gem update --system
-number_of_cores=$(sysctl -n hw.ncpu)
-bundle config --global jobs $((number_of_cores - 1))
-bootstrap_done
+
+#BOOTSTRAP_REPO_URL="https://github.com/deild/mac-bootstrap.git"
+step='1'
+DEFAULT_TIME_ZONE="Europe/Paris"
+ACTUAL_COMPUTER_NAME="$(scutil --get ComputerName)"
+HOMEBREW_PREFIX="/usr/local"
+GATEKEEPER_DISABLE="Yes"
+MACOS_DEFAULT_URL="https://raw.githubusercontent.com/deild/mac-bootstrap/master/macos-defaults"
 
 ################################################################################
-# Setup dotfiles (http://jsua.co/dotfiles)
+# Make sure we're on a Mac before continuing
 ################################################################################
-bootstrap_echo "Step $(((step++))): Installing dotfiles..."
-if [[ -d $DOTFILES_DIR ]]; then
-  bootstrap_echo "Backing up old dotfiles to $HOME/old_dotfiles_backup..."
-  rm -rf "$OLD_DOTFILES_BACKUP"
-  cp -R "$DOTFILES_DIR" "$OLD_DOTFILES_BACKUP"
-  rm -rf "$DOTFILES_DIR"
+if [ "$(uname)" != "Darwin" ]; then
+  bootstrap_error "Oops, it looks like you're using a non-Darwin system. This script
+only supports macOS. Exiting..."
 fi
-bootstrap_echo "Cloning dotfiles repo to ${DOTFILES_DIR} ..."
-git clone --depth 1 "$DOTFILES_REPO_URL" -b "$DOTFILES_BRANCH" "$DOTFILES_DIR"
-# shellcheck source=/dev/null
-#source "$DOTFILES_DIR"/install.sh
-bootstrap_done
 
 ################################################################################
-# Vim
+# Welcome and setup
 ################################################################################
-bootstrap_echo "Step $(((step++))): Configure & install Vim Plugin..."
-if [ ! -d "$VIMRC_DIR" ]; then
-  git clone --depth 1 "$VIMRC_REPO_URL" -b "$VIMRC_BRANCH" "$VIMRC_DIR"
+
+printf '\n'
+printf '************************************************************************\n'
+printf '*******                                                           ******\n'
+printf '*******                 Welcome to Mac Bootstrap!                 ******\n'
+printf '*******                                                           ******\n'
+printf '************************************************************************\n'
+printf '\n'
+
+# Authenticate
+if ! sudo -nv &> /dev/null; then
+  printf 'Before we get started, we need to have sudo access\n'
+  printf 'Enter your password (for sudo access):\n'
+  sudo /usr/bin/true
+  # Keep-alive: update existing `sudo` time stamp until bootstrap has finished
+  while true; do
+    sudo -n /usr/bin/true
+    sleep 60
+    kill -0 "$$" || exit
+  done 2> /dev/null &
 fi
-if [ ! -f "$VIMRC_DIR/autoload/plug.vim" ]; then
-  curl -fLo "$VIMRC_DIR/autoload/plug.vim" --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+set -e
+
+printf "Let's get some infos about your setup.\\n"
+
+printf "\\nEnter your desired time zone.
+To view available options run 'sudo systemsetup -listtimezones' in other terminal
+(Leave blank for default: %s)\\n"  "$DEFAULT_TIME_ZONE"
+read -r -p "> " TIME_ZONE
+export TIME_ZONE=${TIME_ZONE:-$DEFAULT_TIME_ZONE}
+
+printf '\nEnter your desired computer name for your Mac. (Leave blank for default: %s)\n'   "$ACTUAL_COMPUTER_NAME"
+read -r -p "> " COMPUTER_NAME
+export COMPUTER_NAME="${COMPUTER_NAME:-$ACTUAL_COMPUTER_NAME}"
+
+printf '\nEnter url for masOS defaults file. (Leave blank for default: %s)\n'   "$MACOS_DEFAULT_URL"
+read -r -p "> " MACOS_URL
+export MACOS_DEFAULT_URL="${MACOS_URL:-$MACOS_DEFAULT_URL}"
+
+read -p "Do you want disable Gatekeeper? (Y/n) " -n 1 -r
+printf '\n'
+if [[ $REPLY =~ ^[Nn]$   ]]; then
+  GATEKEEPER_DISABLE="No"
 fi
-if [ ! -L "$HOME/.vimrc" ] || [ ! -e "$HOME/.vimrc" ]; then
-  ln -fs "$VIMRC_DIR/vimrc" "$HOME/.vimrc"
+
+printf "\\nLooks good. Here's what we've got so far.\\n"
+bootstrap_echo "Time zone:            [%s]" "$TIME_ZONE"
+bootstrap_echo "Computer name:        [%s]" "$COMPUTER_NAME"
+bootstrap_echo "Disable Gatekeeper:   [%s]" "$GATEKEEPER_DISABLE"
+bootstrap_echo "macos defaults file:  [%s]" "$MACOS_DEFAULT_URL"
+printf '\n'
+read -p "Continue? (y/N) " -n 1 -r
+printf '\n'
+if [[ ! $REPLY =~ ^[Yy]$   ]]; then
+  bootstrap_echo "Exit on demand"
+  exit 0
 fi
-vim +PlugUpgrade +PlugUpdate +qall
-bootstrap_done
+
+set -e
+
+################################################################################
+# Set the timezone; see `sudo systemsetup -listtimezones` for other values
+################################################################################
+bootstrap_echo "Step $step: Set the timezone to $TIME_ZONE"
+sudo systemsetup -settimezone "$TIME_ZONE" > /dev/null
+bootstrap_done "$((step++))"
 
 ################################################################################
 # Set computer name (as done via System Preferences → Sharing)
 ################################################################################
-bootstrap_echo "Step $(((step++))): Set computer name..."
+bootstrap_echo "Step $step: Set computer name to $COMPUTER_NAME"
 if [ "$COMPUTER_NAME" != "$ACTUAL_COMPUTER_NAME" ]; then
   sudo scutil --set ComputerName "$COMPUTER_NAME"
   sudo scutil --set HostName "$COMPUTER_NAME"
@@ -334,35 +138,251 @@ if [ "$COMPUTER_NAME" != "$ACTUAL_COMPUTER_NAME" ]; then
   sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$COMPUTER_NAME"
   sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
 fi
-bootstrap_done
+bootstrap_done "$((step++))"
+
 ################################################################################
-# Set the timezone; see `sudo systemsetup -listtimezones` for other values
+# Install Apple's Command Line Tools
 ################################################################################
-bootstrap_echo "Step $(((step++))): Set the timezone..."
-sudo systemsetup -settimezone "$TIME_ZONE" >/dev/null
-bootstrap_done
+bootstrap_echo "Step $step: Ensuring Apple's command line tools are installed"
+# Checks if path to command line tools exist
+# Credit: https://apple.stackexchange.com/questions/219507/best-way-to-check-in-bash-if-command-line-tools-are-installed
+if command -v xcode-select >&- && xpath=$(xcode-select --print-path) &&
+  test -d "${xpath}" && test -x "${xpath}"; then
+  bootstrap_echo "Apple's command line tools are already installed."
+else
+  bootstrap_echo "Installing Apple's command line tools"
+  xcode-select --install
+fi
+bootstrap_done "$((step++))"
+
+################################################################################
+# Gatekeeper
+################################################################################
+bootstrap_echo "Step $step: Disable or enable Gatekeeper control"
+if [[  $GATEKEEPER_DISABLE =~ Yes   ]]; then
+  sudo spctl --master-disable
+else
+  sudo spctl --master-enable
+fi
+bootstrap_done "$((step++))"
+
+################################################################################
+# Homebrew
+################################################################################
+bootstrap_echo "Step $step: Ensuring Homebrew is installed and updated"
+if [ -d "$HOMEBREW_PREFIX" ]; then
+  if ! [ -r "$HOMEBREW_PREFIX" ]; then
+    sudo chown -vR "$(whoami):admin" $HOMEBREW_PREFIX
+  fi
+else
+  sudo mkdir "$HOMEBREW_PREFIX"
+  sudo chflags norestricted "$HOMEBREW_PREFIX"
+  sudo chown -vR "$(whoami):admin" "$HOMEBREW_PREFIX"
+fi
+if ! command -v brew > /dev/null; then
+  bootstrap_echo "Installing Homebrew"
+  curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install | ruby -e
+  export PATH="/usr/local/bin:$PATH"
+fi
+brew analytics off
+brew update
+bootstrap_done "$((step++))"
+
+###############################################################################
+# update to bash 4
+###############################################################################
+bootstrap_echo "Step $step: Ensuring last bash version is installed"
+brew ls --versions bash bash-completion@2 || brew install bash bash-completion@2
+case "$SHELL" in
+  */bash)
+    if [ "$(command -v bash)" != "${HOMEBREW_PREFIX}/bin/bash" ]; then
+      update_shell
+    fi
+    ;;
+  *)
+    update_shell
+    ;;
+esac
+bootstrap_done "$((step++))"
+
+###############################################################################
+# Homebrew formula
+###############################################################################
+bootstrap_echo "Step $step: Install or upgrade formula dependencies"
+
+brew tap "homebrew/bundle"
+brew bundle --file=- << EOF
+tap "homebrew/core"
+tap "jez/formulae"
+brew "freetype"
+brew "gettext", link: false
+brew "libffi"
+brew "pcre"
+brew "readline"
+brew "sqlite"
+brew "xz"
+brew "python"
+brew "ansible"
+brew "autoconf"
+brew "automake"
+brew "bat"
+brew "boost"
+brew "circleci"
+brew "coreutils"
+brew "curl"
+brew "encfs"
+brew "exiftool"
+brew "gmp"
+brew "libunistring"
+brew "lame"
+brew "xvid"
+brew "ffmpeg"
+brew "findutils"
+brew "mpfr"
+brew "gawk"
+brew "gd"
+brew "git"
+brew "git-filter-repo"
+brew "git-lfs"
+brew "glib-networking"
+brew "gnu-sed"
+brew "go"
+brew "pkg-config"
+brew "gts"
+brew "libtool"
+brew "graphviz"
+brew "gtk-doc"
+brew "hledger"
+brew "htop"
+brew "hugo"
+brew "libgit2"
+brew "libmypaint"
+brew "libressl"
+brew "maven"
+brew "ncdu"
+brew "nginx"
+brew "node"
+brew "ntfs-3g"
+brew "nvm"
+brew "openfortivpn"
+brew "openssh"
+brew "p7zip"
+brew "pandoc"
+brew "pandoc-citeproc"
+brew "py2cairo"
+brew "pygobject3"
+brew "ruby-build"
+brew "rbenv"
+brew "rsync"
+brew "ruby"
+brew "shellcheck"
+brew "shfmt"
+brew "shunit2"
+brew "ssh-copy-id", link: true
+brew "telnet"
+brew "texinfo"
+brew "tmux"
+brew "tree"
+brew "vim"
+brew "wget"
+brew "youtube-dl"
+brew "jez/formulae/pandoc-sidenote"
+EOF
+bootstrap_done "$((step++))"
+
+###############################################################################
+# Homebrew cask
+###############################################################################
+bootstrap_echo "Step $step: Install or upgrade cask"
+
+brew bundle --file=- << EOF
+tap "caskroom/fonts"
+tap "homebrew/cask"
+tap "homebrew/cask-versions"
+cask "adoptopenjdk8"
+cask "osxfuse"
+cask "1password"
+cask "alt-tab"
+cask "appcleaner"
+cask "basictex"
+cask "brave-browser"
+cask "calibre"
+cask "countdown"
+cask "cyberduck"
+cask "epoch-flip-clock"
+cask "font-hack-nerd-font"
+cask "font-source-code-pro"
+cask "font-source-sans-pro"
+cask "fork"
+cask "grid-clock"
+cask "imageoptim"
+cask "kitty"
+cask "macpass"
+cask "macsvg"
+cask "nightowl"
+cask "onyx"
+cask "remember-the-milk"
+cask "slack"
+cask "teamviewer"
+cask "the-unarchiver"
+cask "tor-browser"
+cask "vagrant"
+cask "veracrypt"
+cask "virtualbox"
+cask "visual-studio-code"
+cask "vlc"
+cask "wkhtmltopdf"
+cask "xquartz"
+cask "zoomus"
+EOF
+brew cleanup -s
+bootstrap_done "$((step++))"
+
+################################################################################
+# Install dotfiles
+################################################################################
+bootstrap_echo "Step $step: Install or upgrade and then reload dotfiles"
+if [ ! -d "$HOME/.cfg/" ]; then
+  curl -Lks https://bit.ly/2WCZ49 | bash
+else 
+  git --git-dir="$HOME/.cfg/" --work-tree="$HOME" checkout
+fi
+bootstrap_done "$((step++))"
+
+################################################################################
+# Ruby
+################################################################################
+bootstrap_echo "Step $step: Check which Ruby and Gem installs we are using at this point"
+bootstrap_echo 'Ruby:    [%s]\n'  "$(command -v ruby);$(ruby -v)"
+bootstrap_echo 'Gem:     [%s]\n'  "$(command -v gem);$(gem -v)"
+gem update --system --quiet
+number_of_cores=$(sysctl -n hw.ncpu)
+bundle config --global jobs $((number_of_cores - 1))
+bootstrap_done "$((step++))"
 
 ################################################################################
 # Set macOS preferences
 ################################################################################
+bootstrap_echo "Step $step: Set macOS preferences"
 
-bootstrap_echo "Step $(((step++))): Setting macOS preferences..."
-if [ "$(git config --get remote.origin.url)" == "${BOOTSTRAP_REPO_URL}" ]; then
-  # shellcheck source=/dev/null
-  source macos-defaults
+if [[ $MACOS_DEFAULT_URL =~ ^http ]]; then
+  bootstrap_echo "Load from url $MACOS_DEFAULT_URL"
+  curl -fsSL "$MACOS_DEFAULT_URL" | bash
 else
-  curl -fsSL https://raw.githubusercontent.com/deild/mac-bootstrap/master/macos-defaults | source
+  bootstrap_echo "Load from local file $MACOS_DEFAULT_URL"
+  [ -f "$MACOS_DEFAULT_URL" ] && bash macos-defaults
 fi
-bootstrap_done
+bootstrap_done "$((step++))"
 
 ################################################################################
 # End
 ################################################################################
 
 printf '\n'
-printf "**********************************************************************\\n"
-printf "****                                                              ****\\n"
-printf "**** Mac Bootstrap script complete! Please restart your computer. ****\\n"
-printf "****                                                              ****\\n"
-printf "**********************************************************************\\n"
+printf '************************************************************************\n'
+printf '****                                                              ******\n'
+printf '**** Mac Bootstrap complete! Please restart your computer.        ******\n'
+printf '****                                                              ******\n'
+printf '************************************************************************\n'
 printf '\n'
+

@@ -15,10 +15,10 @@ while true; do
 done 2>/dev/null &
 
 # Set standby delay and hibernation mode
-sudo pmset -a hibernatemode 3
-sudo pmset -a standby 1
-sudo pmset -a standbydelaylow 60
-sudo pmset -a standbydelayhigh 60
+#sudo pmset -a hibernatemode 3
+#sudo pmset -a standby 1
+#sudo pmset -a standbydelaylow 60
+#sudo pmset -a standbydelayhigh 60
 
 # Disable the sound effects on boot
 sudo nvram SystemAudioVolume=" "
@@ -187,7 +187,7 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
 # To have mds ignore all external volumes including network volumes
-defaults write /Library/Preferences/com.apple.SpotlightServer.plist ExternalVolumesIgnore -bool true
+sudo defaults write /Library/Preferences/com.apple.SpotlightServer.plist ExternalVolumesIgnore -bool true
 
 # Disable disk image verification
 # defaults write com.apple.frameworks.diskimages skip-verify -bool true
