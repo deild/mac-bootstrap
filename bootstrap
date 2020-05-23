@@ -283,6 +283,7 @@ brew "telnet"
 brew "texinfo"
 brew "tmux"
 brew "tree"
+brew "vifm"
 brew "vim"
 brew "wget"
 brew "youtube-dl"
@@ -299,7 +300,6 @@ brew bundle --file=- << EOF
 tap "caskroom/fonts"
 tap "homebrew/cask"
 tap "homebrew/cask-versions"
-cask "adoptopenjdk8"
 cask "osxfuse"
 cask "1password"
 cask "alt-tab"
@@ -335,7 +335,7 @@ cask "wkhtmltopdf"
 cask "xquartz"
 cask "zoomus"
 EOF
-brew cleanup -s
+brew cleanup -e
 bootstrap_done "$((step++))"
 
 ################################################################################
