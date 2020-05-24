@@ -46,6 +46,7 @@ ACTUAL_COMPUTER_NAME="$(scutil --get ComputerName)"
 HOMEBREW_PREFIX="/usr/local"
 GATEKEEPER_DISABLE="Yes"
 MACOS_DEFAULT_URL="https://raw.githubusercontent.com/deild/mac-bootstrap/master/macos-defaults"
+DEFAULT_PASSPHRASE=""
 
 ################################################################################
 # Make sure we're on a Mac before continuing
@@ -96,7 +97,7 @@ export COMPUTER_NAME="${COMPUTER_NAME:-$ACTUAL_COMPUTER_NAME}"
 
 printf '\nEnter url for masOS defaults file. (Leave blank for default: %s)\n'   "$MACOS_DEFAULT_URL"
 read -r -p "> " MACOS_URL
-export MACOS_DEFAULT_URL="${MACOS_URL:-$MACOS_DEFAULT_URL}"
+export MACOS_URL="${MACOS_URL:-$MACOS_DEFAULT_URL}"
 
 read -p "Do you want disable Gatekeeper? (Y/n) " -n 1 -r
 printf '\n'
@@ -104,11 +105,17 @@ if [[ $REPLY =~ ^[Nn]$   ]]; then
   GATEKEEPER_DISABLE="No"
 fi
 
+printf '\nEnter a passphrase for generete ssh key. (Leave blank for default: %s)\n'   "$DEFAULT_PASSPHRASE"
+read -r -p "> " PASSPHRASE
+export PASSPHRASE="${PASSPHRASE:-$DEFAULT_PASSPHRASE}"
+
+
 printf "\\nLooks good. Here's what we've got so far.\\n"
 bootstrap_echo "Time zone:            [%s]" "$TIME_ZONE"
 bootstrap_echo "Computer name:        [%s]" "$COMPUTER_NAME"
 bootstrap_echo "Disable Gatekeeper:   [%s]" "$GATEKEEPER_DISABLE"
-bootstrap_echo "macos defaults file:  [%s]" "$MACOS_DEFAULT_URL"
+bootstrap_echo "macos defaults file:  [%s]" "$MACOS_URL"
+bootstrap_echo "Passphrase            [%s]" "$PASSPHRASE"
 printf '\n'
 read -p "Continue? (y/N) " -n 1 -r
 printf '\n'
@@ -335,7 +342,7 @@ cask "wkhtmltopdf"
 cask "xquartz"
 cask "zoomus"
 EOF
-brew cleanup -e
+brew cleanup -s --prune 1
 bootstrap_done "$((step++))"
 
 ################################################################################
@@ -360,17 +367,27 @@ number_of_cores=$(sysctl -n hw.ncpu)
 bundle config --global jobs $((number_of_cores - 1))
 bootstrap_done "$((step++))"
 
+###############################################################################
+# 
+###############################################################################
+bootstrap_echo "Step $step: Generate ed25519 and RSA key"
+
+[ ! -f ~/.ssh/id_ed25519 ] && ssh-keygen -t ed25519 -a 100 -q -N "$PASSPHRASE"
+[ ! -f ~/.ssh/id_rsa ] && ssh-keygen -t rsa -b 4096 -o -a 100 -q -N "$PASSPHRASE"
+
+bootstrap_done "$((step++))"
+
 ################################################################################
 # Set macOS preferences
 ################################################################################
 bootstrap_echo "Step $step: Set macOS preferences"
 
-if [[ $MACOS_DEFAULT_URL =~ ^http ]]; then
+if [[ $MACOS_URL =~ ^http ]]; then
   bootstrap_echo "Load from url $MACOS_DEFAULT_URL"
-  curl -fsSL "$MACOS_DEFAULT_URL" | bash
+  curl -fsSL "$MACOS_URL" | bash
 else
-  bootstrap_echo "Load from local file $MACOS_DEFAULT_URL"
-  [ -f "$MACOS_DEFAULT_URL" ] && bash macos-defaults
+  bootstrap_echo "Load from local file $MACOS_URL"
+  [ -f "$MACOS_URL" ] && bash macos-defaults
 fi
 bootstrap_done "$((step++))"
 

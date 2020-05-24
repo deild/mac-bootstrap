@@ -65,14 +65,15 @@ When you invoke `bootstrap`, here's what it does:
 
 - Set the timezone to Europe/Paris
 - Set computer name to Higuma
-- Ensure Apple's command line tools are installed
+- Ensure Apple's command line tools are installed, and install it if not
 - Disable or enable Gatekeeper control
-- Ensure [Homebrew] is installed and updated
-- Ensure last bash version is installed
+- Install or update [Homebrew]
+- Ensure last bash version is installed, and update it if not
 - Install or upgrade formula dependencies
 - Install or upgrade cask
 - Install or upgrade and then reload [dotfiles]
 - Check which Ruby and Gem installs we are using at this point
+- Generate ed25519 and RSA key
 - Set macOS [preferences]
 
 [preferences]: https://github.com/deild/mac-bootstrap/blob/master/macos-defaults
