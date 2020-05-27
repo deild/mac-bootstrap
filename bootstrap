@@ -109,7 +109,6 @@ printf '\nEnter a passphrase for generete ssh key. (Leave blank for default: %s)
 read -r -p "> " PASSPHRASE
 export PASSPHRASE="${PASSPHRASE:-$DEFAULT_PASSPHRASE}"
 
-
 printf "\\nLooks good. Here's what we've got so far.\\n"
 bootstrap_echo "Time zone:            [%s]" "$TIME_ZONE"
 bootstrap_echo "Computer name:        [%s]" "$COMPUTER_NAME"
@@ -153,8 +152,8 @@ bootstrap_done "$((step++))"
 bootstrap_echo "Step $step: Ensuring Apple's command line tools are installed"
 # Checks if path to command line tools exist
 # Credit: https://apple.stackexchange.com/questions/219507/best-way-to-check-in-bash-if-command-line-tools-are-installed
-if command -v xcode-select >&- && xpath=$(xcode-select --print-path) &&
-  test -d "${xpath}" && test -x "${xpath}"; then
+if command -v xcode-select >&- && xpath=$(xcode-select --print-path) \
+  && test -d "${xpath}" && test -x "${xpath}"; then
   bootstrap_echo "Apple's command line tools are already installed."
 else
   bootstrap_echo "Installing Apple's command line tools"
@@ -166,7 +165,7 @@ bootstrap_done "$((step++))"
 # Gatekeeper
 ################################################################################
 bootstrap_echo "Step $step: Disable or enable Gatekeeper control"
-if [[  $GATEKEEPER_DISABLE =~ Yes   ]]; then
+if [[ $GATEKEEPER_DISABLE =~ Yes    ]]; then
   sudo spctl --master-disable
 else
   sudo spctl --master-enable
@@ -222,7 +221,7 @@ brew bundle --file=- << EOF
 tap "homebrew/core"
 tap "jez/formulae"
 brew "freetype"
-brew "gettext", link: false
+brew "gettext"
 brew "libffi"
 brew "pcre"
 brew "readline"
@@ -348,7 +347,7 @@ bootstrap_done "$((step++))"
 bootstrap_echo "Step $step: Install or upgrade and then reload dotfiles"
 if [ ! -d "$HOME/.cfg/" ]; then
   curl -Lks https://bit.ly/2WCZ49 | bash
-else 
+else
   git --git-dir="$HOME/.cfg/" --work-tree="$HOME" checkout
 fi
 bootstrap_done "$((step++))"
@@ -365,7 +364,7 @@ bundle config --global jobs $((number_of_cores - 1))
 bootstrap_done "$((step++))"
 
 ###############################################################################
-# 
+#
 ###############################################################################
 bootstrap_echo "Step $step: Generate ed25519 and RSA key"
 
@@ -399,4 +398,3 @@ printf '**** Mac Bootstrap complete! Please restart your computer.        ******
 printf '****                                                              ******\n'
 printf '************************************************************************\n'
 printf '\n'
-
