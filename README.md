@@ -31,13 +31,13 @@ curl -fsSO https://bit.ly/deild_bootstrap
 Review the script (avoid running scripts you haven't read!):
 
 ```sh
-less bootstrap
+less deild_bootstrap
 ```
 
 Execute the downloaded script:
 
 ```sh
-sh bootstrap 2>&1 | tee ~/.bootstrap.log
+sh deild_bootstrap 2>&1 | tee ~/.bootstrap.log
 ```
 
 Optionally, review the log:
@@ -49,7 +49,7 @@ less ~/.bootstrap.log
 Or to install with a one-liner, run this:
 
 ```sh
-curl -fsSO https://bit.ly/deild_bootstrap && sh bootstrap 2>&1 | tee ~/.bootstrap.log
+curl -fsSO https://bit.ly/deild_bootstrap && sh deild_bootstrap 2>&1 | tee ~/.bootstrap.log
 ```
 
 ## Debugging

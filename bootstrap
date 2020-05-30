@@ -223,6 +223,7 @@ brew tap "homebrew/bundle"
 brew bundle --file=- << EOF
 tap "homebrew/core"
 tap "jez/formulae"
+brew "asciidoctor"
 brew "freetype"
 brew "gettext"
 brew "libffi"
