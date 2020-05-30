@@ -158,6 +158,9 @@ if command -v xcode-select >&- && xpath=$(xcode-select --print-path) \
 else
   bootstrap_echo "Installing Apple's command line tools"
   xcode-select --install
+  while ! command -v xcode-select >&-; do
+    sleep   60
+  done
 fi
 bootstrap_done "$((step++))"
 
@@ -187,7 +190,7 @@ else
 fi
 if ! command -v brew > /dev/null; then
   bootstrap_echo "Installing Homebrew"
-  curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install | ruby -e
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   export PATH="/usr/local/bin:$PATH"
 fi
 brew analytics off
@@ -236,7 +239,6 @@ brew "boost"
 brew "circleci"
 brew "coreutils"
 brew "curl"
-brew "encfs"
 brew "exiftool"
 brew "gmp"
 brew "libunistring"
@@ -264,11 +266,10 @@ brew "hugo"
 brew "libgit2"
 brew "libmypaint"
 brew "libressl"
-brew "maven"
+#brew "maven"
 brew "ncdu"
 brew "nginx"
 brew "node"
-brew "ntfs-3g"
 brew "nvm"
 brew "openfortivpn"
 brew "openssh"
@@ -320,7 +321,7 @@ cask "fork"
 cask "grid-clock"
 cask "imageoptim"
 cask "kitty"
-cask "macpass"
+#cask "macpass"
 cask "macsvg"
 cask "nightowl"
 cask "onyx"
@@ -331,15 +332,28 @@ cask "the-unarchiver"
 cask "tor-browser"
 cask "vagrant"
 cask "veracrypt"
-cask "virtualbox"
+#cask "virtualbox"
 cask "visual-studio-code"
 cask "vlc"
 #cask "wkhtmltopdf"
 cask "xquartz"
 cask "zoomus"
+brew "encfs"
+brew "ntfs-3g"
 EOF
 brew cleanup -s --prune 1
 bootstrap_done "$((step++))"
+
+if ! command -v virtualbox; then
+  if ! brew cask install virtualbox; then
+    read -p "Continue? (y/N) " -n 1 -r
+    printf '\n'
+    if [[ ! $REPLY =~ ^[Yy]$   ]]; then
+      bootstrap_echo "Exit on demand"
+      exit 0
+    fi
+  fi
+fi
 
 ################################################################################
 # Install dotfiles
