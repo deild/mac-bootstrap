@@ -63,18 +63,18 @@ Or, attach the whole log file as an attachment.
 
 When you invoke `bootstrap`, here's what it does:
 
-- Set the timezone to Europe/Paris
-- Set computer name to Higuma
-- Ensure Apple's command line tools are installed, and install it if not
-- Disable or enable Gatekeeper control
-- Install or update [Homebrew]
-- Ensure last bash version is installed, and update it if not
-- Install or upgrade formula dependencies
-- Install or upgrade cask
-- Install or upgrade and then reload [dotfiles]
-- Check which Ruby and Gem installs we are using at this point
-- Generate ed25519 and RSA key
-- Set macOS [preferences]
+1. Set the timezone to Europe/Paris
+1. Set computer name to Higuma
+1. Ensure Apple's command line tools are installed, and install it if not
+1. Disable or enable Gatekeeper control
+1. Install or update [Homebrew]
+<!-- 1. Ensure last bash version is installed, and update it if not -->
+1. Install or upgrade formula dependencies
+1. Install or upgrade cask
+1. Install or upgrade and then reload [dotfiles]
+1. Check which Ruby and Gem installs we are using at this point
+1. Generate ed25519 and RSA key
+1. Set macOS [preferences]
 
 [preferences]: https://github.com/deild/mac-bootstrap/blob/master/macos-defaults
 [joshukraine's mac-bootstrap]: https://github.com/joshukraine/mac-bootstrap/blob/master/bootstrap

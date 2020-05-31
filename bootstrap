@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 ################################################################################
 # bootstrap
@@ -27,19 +27,10 @@ bootstrap_done() {
   bootstrap_echo "Step $1 \\e[0;32m[✔]\\e[0m"
 }
 
-update_shell() {
-  # Switch to using brew-installed bash as default shell
-  if ! grep -Fq "${HOMEBREW_PREFIX}/bin/bash" /etc/shells; then
-    echo "${HOMEBREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells
-    chsh -s "${HOMEBREW_PREFIX}/bin/bash"
-  fi
-}
-
 ################################################################################
 # VARIABLE DECLARATIONS
 ################################################################################
 
-#BOOTSTRAP_REPO_URL="https://github.com/deild/mac-bootstrap.git"
 step='1'
 DEFAULT_TIME_ZONE="Europe/Paris"
 ACTUAL_COMPUTER_NAME="$(scutil --get ComputerName)"
@@ -140,7 +131,6 @@ if [ "$COMPUTER_NAME" != "$ACTUAL_COMPUTER_NAME" ]; then
   sudo scutil --set ComputerName "$COMPUTER_NAME"
   sudo scutil --set HostName "$COMPUTER_NAME"
   sudo scutil --set LocalHostName "$COMPUTER_NAME"
-  #sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$( echo "$COMPUTER_NAME" | tr '[:upper:]' '[:lower:]')"
   sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$COMPUTER_NAME"
   sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
 fi
@@ -190,28 +180,11 @@ else
 fi
 if ! command -v brew > /dev/null; then
   bootstrap_echo "Installing Homebrew"
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+  zsh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   export PATH="/usr/local/bin:$PATH"
 fi
 brew analytics off
 brew update
-bootstrap_done "$((step++))"
-
-###############################################################################
-# update to bash 4
-###############################################################################
-bootstrap_echo "Step $step: Ensuring last bash version is installed"
-brew ls --versions bash bash-completion@2 || brew install bash bash-completion@2
-case "$SHELL" in
-  */bash)
-    if [ "$(command -v bash)" != "${HOMEBREW_PREFIX}/bin/bash" ]; then
-      update_shell
-    fi
-    ;;
-  *)
-    update_shell
-    ;;
-esac
 bootstrap_done "$((step++))"
 
 ###############################################################################
@@ -237,7 +210,7 @@ brew "autoconf"
 brew "automake"
 brew "bat"
 brew "boost"
-brew "circleci"
+#brew "circleci"
 brew "coreutils"
 brew "curl"
 brew "exiftool"
@@ -269,7 +242,7 @@ brew "libmypaint"
 brew "libressl"
 #brew "maven"
 brew "ncdu"
-brew "nginx"
+#brew "nginx"
 brew "node"
 brew "nvm"
 brew "openfortivpn"
@@ -323,8 +296,8 @@ cask "grid-clock"
 cask "imageoptim"
 cask "kitty"
 #cask "macpass"
-cask "macsvg"
-cask "nightowl"
+#cask "macsvg"
+#cask "nightowl"
 cask "onyx"
 cask "remember-the-milk"
 cask "slack"
@@ -343,7 +316,6 @@ brew "encfs"
 brew "ntfs-3g"
 EOF
 brew cleanup -s --prune 1
-bootstrap_done "$((step++))"
 
 if ! command -v virtualbox; then
   if ! brew cask install virtualbox; then
@@ -355,13 +327,14 @@ if ! command -v virtualbox; then
     fi
   fi
 fi
+bootstrap_done "$((step++))"
 
 ################################################################################
 # Install dotfiles
 ################################################################################
 bootstrap_echo "Step $step: Install or upgrade and then reload dotfiles"
 if [ ! -d "$HOME/.cfg/" ]; then
-  curl -Lks https://bit.ly/2WCZ49 | bash
+  curl -Lks https://bit.ly/2WCZ49 | zsh
 else
   git --git-dir="$HOME/.cfg/" --work-tree="$HOME" checkout
 fi
@@ -395,10 +368,10 @@ bootstrap_echo "Step $step: Set macOS preferences"
 
 if [[ $MACOS_URL =~ ^http ]]; then
   bootstrap_echo "Load from url $MACOS_DEFAULT_URL"
-  curl -fsSL "$MACOS_URL" | bash
+  curl -fsSL "$MACOS_URL" | zsh
 else
   bootstrap_echo "Load from local file $MACOS_URL"
-  [ -f "$MACOS_URL" ] && bash macos-defaults
+  [ -f "$MACOS_URL" ] && zsh "$MACOS_URL"
 fi
 bootstrap_done "$((step++))"
 
