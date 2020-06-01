@@ -68,7 +68,6 @@ When you invoke `bootstrap`, here's what it does:
 1. Ensure Apple's command line tools are installed, and install it if not
 1. Disable or enable Gatekeeper control
 1. Install or update [Homebrew]
-<!-- 1. Ensure last bash version is installed, and update it if not -->
 1. Install or upgrade formula dependencies
 1. Install or upgrade cask
 1. Install or upgrade and then reload [dotfiles]

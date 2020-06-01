@@ -79,26 +79,26 @@ printf "Let's get some infos about your setup.\\n"
 
 printf "\\nEnter your desired time zone.
 To view available options run 'sudo systemsetup -listtimezones' in other terminal
-(Leave blank for default: %s)\\n"  "$DEFAULT_TIME_ZONE"
-read -r -p "> " TIME_ZONE
+(Leave blank for default: %s)\\n>_ "  "$DEFAULT_TIME_ZONE"
+read TIME_ZONE
 export TIME_ZONE=${TIME_ZONE:-$DEFAULT_TIME_ZONE}
 
-printf '\nEnter your desired computer name for your Mac. (Leave blank for default: %s)\n'   "$ACTUAL_COMPUTER_NAME"
-read -r -p "> " COMPUTER_NAME
+printf '\nEnter your desired computer name for your Mac. (Leave blank for default: %s)\n>_ '   "$ACTUAL_COMPUTER_NAME"
+read COMPUTER_NAME
 export COMPUTER_NAME="${COMPUTER_NAME:-$ACTUAL_COMPUTER_NAME}"
 
-printf '\nEnter url for masOS defaults file. (Leave blank for default: %s)\n'   "$MACOS_DEFAULT_URL"
-read -r -p "> " MACOS_URL
+printf '\nEnter url for masOS defaults file. (Leave blank for default: %s)\n>_ '   "$MACOS_DEFAULT_URL"
+read MACOS_URL
 export MACOS_URL="${MACOS_URL:-$MACOS_DEFAULT_URL}"
 
-read -p "Do you want disable Gatekeeper? (Y/n) " -n 1 -r
-printf '\n'
+printf 'Do you want disable Gatekeeper? (Y/n) \n>_ '
+read REPLY
 if [[ $REPLY =~ ^[Nn]$   ]]; then
   GATEKEEPER_DISABLE="No"
 fi
 
-printf '\nEnter a passphrase for generete ssh key. (Leave blank for default: %s)\n'   "$DEFAULT_PASSPHRASE"
-read -r -p "> " PASSPHRASE
+printf '\nEnter a passphrase for generete ssh key. (Leave blank for default: %s)\n>_ '   "$DEFAULT_PASSPHRASE"
+read PASSPHRASE
 export PASSPHRASE="${PASSPHRASE:-$DEFAULT_PASSPHRASE}"
 
 printf "\\nLooks good. Here's what we've got so far.\\n"
@@ -108,8 +108,8 @@ bootstrap_echo "Disable Gatekeeper:   [%s]" "$GATEKEEPER_DISABLE"
 bootstrap_echo "macos defaults file:  [%s]" "$MACOS_URL"
 bootstrap_echo "Passphrase            [%s]" "$PASSPHRASE"
 printf '\n'
-read -p "Continue? (y/N) " -n 1 -r
-printf '\n'
+printf "Continue? (y/N) \\n>_ "
+read REPLY
 if [[ ! $REPLY =~ ^[Yy]$   ]]; then
   bootstrap_echo "Exit on demand"
   exit 0
@@ -241,9 +241,7 @@ brew "hugo"
 brew "libgit2"
 brew "libmypaint"
 brew "libressl"
-#brew "maven"
 brew "ncdu"
-#brew "nginx"
 brew "node"
 brew "nvm"
 brew "openfortivpn"
@@ -260,7 +258,6 @@ brew "ruby"
 brew "shellcheck"
 brew "shfmt"
 brew "shunit2"
-brew "ssh-copy-id", link: true
 brew "telnet"
 brew "texinfo"
 brew "tmux"
@@ -296,9 +293,6 @@ cask "fork"
 cask "grid-clock"
 cask "imageoptim"
 cask "kitty"
-#cask "macpass"
-#cask "macsvg"
-#cask "nightowl"
 cask "onyx"
 cask "remember-the-milk"
 cask "slack"
@@ -310,7 +304,6 @@ cask "veracrypt"
 #cask "virtualbox"
 cask "visual-studio-code"
 cask "vlc"
-#cask "wkhtmltopdf"
 cask "xquartz"
 cask "zoomus"
 brew "encfs"
@@ -320,8 +313,8 @@ brew cleanup -s --prune 1
 
 if ! command -v virtualbox; then
   if ! brew cask install virtualbox; then
-    read -p "Continue? (y/N) " -n 1 -r
-    printf '\n'
+    printf "Continue? (y/N) \\n>_ "
+    read REPLY
     if [[ ! $REPLY =~ ^[Yy]$   ]]; then
       bootstrap_echo "Exit on demand"
       exit 0
@@ -329,6 +322,19 @@ if ! command -v virtualbox; then
   fi
 fi
 bootstrap_done "$((step++))"
+
+################################################################################
+# zsh plugin
+################################################################################
+bootstrap_echo "Step $step: Install or upgrade zsh plugin"
+if ! command -v p10k ; then
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.config/powerlevel10k
+  echo 'source ~/.config/powerlevel10k/powerlevel10k.zsh-theme' >>! ~/.zshrc
+fi
+brew bundle --file=- << EOF
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
+EOF
 
 ################################################################################
 # Install dotfiles
