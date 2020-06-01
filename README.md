@@ -37,7 +37,7 @@ less deild_bootstrap
 Execute the downloaded script:
 
 ```sh
-sh deild_bootstrap 2>&1 | tee ~/.bootstrap.log
+zsh deild_bootstrap 2>&1 | tee ~/.bootstrap.log
 ```
 
 Optionally, review the log:
@@ -49,7 +49,7 @@ less ~/.bootstrap.log
 Or to install with a one-liner, run this:
 
 ```sh
-curl -fsSO https://bit.ly/deild_bootstrap && sh deild_bootstrap 2>&1 | tee ~/.bootstrap.log
+curl -fsSO https://bit.ly/deild_bootstrap && zsh deild_bootstrap 2>&1 | tee ~/.bootstrap.log
 ```
 
 ## Debugging
@@ -77,7 +77,7 @@ When you invoke `bootstrap`, here's what it does:
 
 [preferences]: https://github.com/deild/mac-bootstrap/blob/master/macos-defaults
 [joshukraine's mac-bootstrap]: https://github.com/joshukraine/mac-bootstrap/blob/master/bootstrap
-[screenshot]: https://zupimages.net/up/20/20/i92s.png
+[screenshot]: https://zupimages.net/up/20/23/s2o2.png
 [bootstrap]: https://github.com/deild/mac-bootstrap/blob/master/bootstrap
 [GitHub Issue]: https://github.com/deild/mac-bootstrap/issues/new
 [Catalina 10.15]: https://www.apple.com/macos/catalina/

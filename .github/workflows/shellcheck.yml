@@ -1,0 +1,11 @@
+name: shellcheck
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: macos-10.15
+    steps:
+      - uses: action/checkout@v2
+      - name: one line script
+        run: echo 'Hello, world!'
+
