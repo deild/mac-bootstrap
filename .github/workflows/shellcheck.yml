@@ -5,7 +5,11 @@ jobs:
   build:
     runs-on: macos-10.15
     steps:
-      - uses: action/checkout@v2
-      - name: one line script
-        run: echo 'Hello, world!'
+      - uses: actions/checkout@v2
+      - name: install dependencies
+        run: brew install shellcheck shfmt
+      - name: shellcheck
+        run: shellcheck bootstrap
+      - name: shfmt
+        run: shfmt -s -i 2 -bn -ci -sr -kp bootstrap
 

@@ -1,4 +1,4 @@
-# Mac Bootstrap [![Build Status](https://travis-ci.org/deild/mac-bootstrap.svg?branch=master)](https://travis-ci.org/deild/mac-bootstrap) [![MIT](https://img.shields.io/badge/license-MIT-BLUE)](LICENSE)
+# Mac Bootstrap ![shellcheck](https://github.com/deild/mac-bootstrap/workflows/shellcheck/badge.svg) [![MIT](https://img.shields.io/badge/license-MIT-BLUE)](LICENSE)
 
 > Your laptop is your sword. Don't go into battle without it.
 

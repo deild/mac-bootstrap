@@ -79,26 +79,26 @@ printf "Let's get some infos about your setup.\\n"
 
 printf "\\nEnter your desired time zone.
 To view available options run 'sudo systemsetup -listtimezones' in other terminal
-(Leave blank for default: %s)\\n>_ "  "$DEFAULT_TIME_ZONE"
-read TIME_ZONE
+ Leave blank for default: %s)\\n>_ "  "$DEFAULT_TIME_ZONE"
+read -r TIME_ZONE
 export TIME_ZONE=${TIME_ZONE:-$DEFAULT_TIME_ZONE}
 
 printf '\nEnter your desired computer name for your Mac. (Leave blank for default: %s)\n>_ '   "$ACTUAL_COMPUTER_NAME"
-read COMPUTER_NAME
+read -r COMPUTER_NAME
 export COMPUTER_NAME="${COMPUTER_NAME:-$ACTUAL_COMPUTER_NAME}"
 
 printf '\nEnter url for masOS defaults file. (Leave blank for default: %s)\n>_ '   "$MACOS_DEFAULT_URL"
-read MACOS_URL
+read -r MACOS_URL
 export MACOS_URL="${MACOS_URL:-$MACOS_DEFAULT_URL}"
 
 printf 'Do you want disable Gatekeeper? (Y/n) \n>_ '
-read REPLY
+read -r REPLY
 if [[ $REPLY =~ ^[Nn]$   ]]; then
   GATEKEEPER_DISABLE="No"
 fi
 
 printf '\nEnter a passphrase for generete ssh key. (Leave blank for default: %s)\n>_ '   "$DEFAULT_PASSPHRASE"
-read PASSPHRASE
+read -r PASSPHRASE
 export PASSPHRASE="${PASSPHRASE:-$DEFAULT_PASSPHRASE}"
 
 printf "\\nLooks good. Here's what we've got so far.\\n"
@@ -109,7 +109,7 @@ bootstrap_echo "macos defaults file:  [%s]" "$MACOS_URL"
 bootstrap_echo "Passphrase            [%s]" "$PASSPHRASE"
 printf '\n'
 printf "Continue? (y/N) \\n>_ "
-read REPLY
+read -r REPLY
 if [[ ! $REPLY =~ ^[Yy]$   ]]; then
   bootstrap_echo "Exit on demand"
   exit 0
@@ -314,7 +314,7 @@ brew cleanup -s --prune 1
 if ! command -v virtualbox; then
   if ! brew cask install virtualbox; then
     printf "Continue? (y/N) \\n>_ "
-    read REPLY
+    read -r REPLY
     if [[ ! $REPLY =~ ^[Yy]$   ]]; then
       bootstrap_echo "Exit on demand"
       exit 0
