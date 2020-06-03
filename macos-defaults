@@ -133,8 +133,6 @@ defaults write com.apple.dock wvous-tr-modifier -int 0
 # Bottom right screen corner → Start screen saver
 defaults write com.apple.dock wvous-br-corner -int 5
 defaults write com.apple.dock wvous-br-modifier -int 0
-# Bottom left screen corner → Show application windows
-defaults write com.apple.dock wvous-bl-corner -int 999999999s write com.apple.dock wvous-bl-modifier -int 0
 
 ###############################################################################
 # Finder                                                                      #

@@ -73,6 +73,8 @@ When you invoke `bootstrap`, here's what it does:
 1. Install or upgrade and then reload [dotfiles]
 1. Check which Ruby and Gem installs we are using at this point
 1. Generate ed25519 and RSA key
+1. Prefer tools installed by Homebrew according to the PATH environment variable
+1. Disable Homebrew analytics
 1. Set macOS [preferences]
 
 [preferences]: https://github.com/deild/mac-bootstrap/blob/master/macos-defaults
