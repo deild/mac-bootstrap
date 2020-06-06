@@ -39,6 +39,18 @@ HOMEBREW_PREFIX="/usr/local"
 GATEKEEPER_DISABLE="Yes"
 MACOS_DEFAULT_URL="https://raw.githubusercontent.com/deild/mac-bootstrap/master/macos-defaults"
 DEFAULT_PASSPHRASE=""
+QUIET=false
+
+while getopts ":q" opts; do
+  case "${opts}" in
+    q)
+      QUIET=true
+      ;;
+    *)
+      bootstrap_error "unknown option -${OPTARG}"
+      ;;
+  esac
+done
 
 ################################################################################
 # Make sure we're on a Mac before continuing
@@ -75,7 +87,9 @@ fi
 
 set -e
 
-printf "Let's get some infos about your setup.\\n"
+if ! $QUIET; then
+  printf "Let's get some infos about your setup.\\n"
+fi
 
 printf "\\nEnter your desired time zone.
 To view available options run 'sudo systemsetup -listtimezones' in other terminal
@@ -108,7 +122,7 @@ bootstrap_echo "Disable Gatekeeper:   [%s]" "$GATEKEEPER_DISABLE"
 bootstrap_echo "macos defaults file:  [%s]" "$MACOS_URL"
 bootstrap_echo "Passphrase            [%s]" "$PASSPHRASE"
 printf '\n'
-printf "Continue? (y/N) \\n>_ "
+printf 'Continue? (y/N) \n>_ '
 read -r REPLY
 if [[ ! $REPLY =~ ^[Yy]$   ]]; then
   bootstrap_echo "Exit on demand"
@@ -188,7 +202,7 @@ brew update
 bootstrap_done "$((step++))"
 ################################################################################
 bootstrap_echo "Step $step: Disable Homebrew analytics"
-if [ "$(brew analytics)" != "Analytics are disabled." ] ; then
+if [ "$(brew analytics)" != "Analytics are disabled." ]; then
   brew analytics off
 fi
 bootstrap_done "$((step++))"
@@ -318,7 +332,7 @@ brew cleanup -s --prune 1
 
 if ! command -v virtualbox; then
   if ! brew cask install virtualbox; then
-    printf "Continue? (y/N) \\n>_ "
+    printf 'Continue? (y/N) \n>_ '
     read -r REPLY
     if [[ ! $REPLY =~ ^[Yy]$   ]]; then
       bootstrap_echo "Exit on demand"
@@ -332,15 +346,15 @@ bootstrap_done "$((step++))"
 # zsh plugin
 ################################################################################
 bootstrap_echo "Step $step: Install or upgrade zsh plugin"
-if ! [ $(command -v p10k) ]; then
+if ! [ -f ~/.config/powerlevel10k/powerlevel10k.zsh-theme ]; then
   git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.config/powerlevel10k
-  echo 'source ~/.config/powerlevel10k/powerlevel10k.zsh-theme' >>! ~/.zshrc
+  echo 'source ~/.config/powerlevel10k/powerlevel10k.zsh-theme' ~/.zshrc >> !
 fi
 brew bundle --file=- << EOF
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 EOF
-
+bootstrap_done "$((step++))"
 ################################################################################
 # Install dotfiles
 ################################################################################
@@ -375,7 +389,7 @@ bootstrap_done "$((step++))"
 bootstrap_echo "Step $step: Prefer tools installed by Homebrew according to the PATH environment variable"
 UB_POS=$(echo "$PATH" | awk '{print index($1, "/usr/bin")}')
 ULB_POS=$(echo "$PATH" | awk '{print index($1, "/usr/local/bin")}')
-if [ ! "$ULB_POS" -eq "0" ] && [ ! "$ULB_POS" -gt "$UB_POS" ] ; then
+if [ ! "$ULB_POS" -eq "0" ] && [ ! "$ULB_POS" -gt "$UB_POS" ]; then
   PATH="/usr/local/bin:${PATH//:\/usr\/local\/bin:/:}"
   export PATH
 fi
