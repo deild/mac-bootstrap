@@ -184,8 +184,13 @@ if ! command -v brew > /dev/null; then
   zsh -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   export PATH="/usr/local/bin:$PATH"
 fi
-brew analytics off
 brew update
+bootstrap_done "$((step++))"
+################################################################################
+bootstrap_echo "Step $step: Disable Homebrew analytics"
+if [ "$(brew analytics)" != "Analytics are disabled." ] ; then
+  brew analytics off
+fi
 bootstrap_done "$((step++))"
 
 ###############################################################################
@@ -327,7 +332,7 @@ bootstrap_done "$((step++))"
 # zsh plugin
 ################################################################################
 bootstrap_echo "Step $step: Install or upgrade zsh plugin"
-if [ ! command -v p10k ]; then
+if ! [ $(command -v p10k) ]; then
   git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.config/powerlevel10k
   echo 'source ~/.config/powerlevel10k/powerlevel10k.zsh-theme' >>! ~/.zshrc
 fi
@@ -371,13 +376,8 @@ bootstrap_echo "Step $step: Prefer tools installed by Homebrew according to the 
 UB_POS=$(echo "$PATH" | awk '{print index($1, "/usr/bin")}')
 ULB_POS=$(echo "$PATH" | awk '{print index($1, "/usr/local/bin")}')
 if [ ! "$ULB_POS" -eq "0" ] && [ ! "$ULB_POS" -gt "$UB_POS" ] ; then
-  export PATH="/usr/local/bin:$(echo $PATH | sed -e 's,:/usr/local/bin:,:,')"
-fi
-bootstrap_done "$((step++))"
-################################################################################
-bootstrap_echo "Step $step: Disable Homebrew analytics"
-if [[ ! -n $HOMEBREW_NO_ANALYTICS ]]; then
-  echo 'export HOMEBREW_NO_ANALYTICS=1' >> ~/.config/zsh/exports ; source ~/.config/zsh/exports
+  PATH="/usr/local/bin:${PATH//:\/usr\/local\/bin:/:}"
+  export PATH
 fi
 bootstrap_done "$((step++))"
 
