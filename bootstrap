@@ -420,3 +420,4 @@ printf '**** Mac Bootstrap complete! Please restart your computer.        ******
 printf '****                                                              ******\n'
 printf '************************************************************************\n'
 printf '\n'
+# vim:syntax=sh:filetype=sh
