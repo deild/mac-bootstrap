@@ -207,6 +207,13 @@ if [ "$(brew analytics)" != "Analytics are disabled." ]; then
 fi
 bootstrap_done "$((step++))"
 
+
+###############################################################################
+# Download Rustup and install Rust
+if ! command -v rustup; then
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+fi
+
 ###############################################################################
 # Homebrew formula
 ###############################################################################
