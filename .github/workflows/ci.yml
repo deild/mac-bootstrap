@@ -1,0 +1,40 @@
+name: CI
+on:
+  pull_request:
+    types: edited
+  push:
+    branches-ignore: master
+
+jobs:
+  build:
+    runs-on: 
+      - macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      # extract branch name
+      - name: Extract branch name
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        id: extract_branch
+
+      # extract branch name on pull request
+      - name: Print branch name
+        if: github.event_name == 'pull_request'
+        run: echo "BRANCH_NAME=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
+
+      # print branch name
+      - name: Get branch name
+        run: echo 'The branch name is' $BRANCH_NAME
+
+      - name: dependencies
+        run: |
+          rm '/usr/local/bin/2to3'
+          brew update
+          brew upgrade
+          
+      - name: install with one-liner bootstrap and relaunch
+        run: |
+          set -o pipefail
+          curl -fsSO https://raw.githubusercontent.com/deild/mac-bootstrap/${BRANCH_NAME}/bootstrap && zsh bootstrap -q 2>&1 | tee ~/.bootstrap.log
+          curl -fsSO https://raw.githubusercontent.com/deild/mac-bootstrap/${BRANCH_NAME}/bootstrap | zsh -s -- -q 2>&1 | tee ~/.bootstrap.log

@@ -91,28 +91,38 @@ if ! $QUIET; then
   printf "Let's get some infos about your setup.\\n"
 fi
 
-printf "\\nEnter your desired time zone.
-To view available options run 'sudo systemsetup -listtimezones' in other terminal
- Leave blank for default: %s)\\n>_ "  "$DEFAULT_TIME_ZONE"
-read -r TIME_ZONE
+if ! $QUIET; then
+  printf "\\nEnter your desired time zone.
+  To view available options run 'sudo systemsetup -listtimezones' in other terminal
+  Leave blank for default: %s)\\n>_ "  "$DEFAULT_TIME_ZONE"
+  read -r TIME_ZONE
+fi
 export TIME_ZONE=${TIME_ZONE:-$DEFAULT_TIME_ZONE}
 
-printf '\nEnter your desired computer name for your Mac. (Leave blank for default: %s)\n>_ '   "$ACTUAL_COMPUTER_NAME"
-read -r COMPUTER_NAME
+if ! $QUIET; then
+  printf '\nEnter your desired computer name for your Mac. (Leave blank for default: %s)\n>_ '   "$ACTUAL_COMPUTER_NAME"
+  read -r COMPUTER_NAME
+fi
 export COMPUTER_NAME="${COMPUTER_NAME:-$ACTUAL_COMPUTER_NAME}"
 
-printf '\nEnter url for masOS defaults file. (Leave blank for default: %s)\n>_ '   "$MACOS_DEFAULT_URL"
-read -r MACOS_URL
+if ! $QUIET; then
+  printf '\nEnter url for masOS defaults file. (Leave blank for default: %s)\n>_ '   "$MACOS_DEFAULT_URL"
+  read -r MACOS_URL
+fi
 export MACOS_URL="${MACOS_URL:-$MACOS_DEFAULT_URL}"
 
-printf 'Do you want disable Gatekeeper? (Y/n) \n>_ '
-read -r REPLY
-if [[ $REPLY =~ ^[Nn]$   ]]; then
-  GATEKEEPER_DISABLE="No"
+if ! $QUIET; then
+  printf 'Do you want disable Gatekeeper? (Y/n) \n>_ '
+  read -r REPLY
+  if [[ $REPLY =~ ^[Nn]$   ]]; then
+    GATEKEEPER_DISABLE="No"
+  fi
 fi
 
-printf '\nEnter a passphrase for generete ssh key. (Leave blank for default: %s)\n>_ '   "$DEFAULT_PASSPHRASE"
-read -r PASSPHRASE
+if ! $QUIET; then
+  printf '\nEnter a passphrase for generete ssh key. (Leave blank for default: %s)\n>_ '   "$DEFAULT_PASSPHRASE"
+  read -r PASSPHRASE
+fi
 export PASSPHRASE="${PASSPHRASE:-$DEFAULT_PASSPHRASE}"
 
 printf "\\nLooks good. Here's what we've got so far.\\n"
@@ -122,11 +132,13 @@ bootstrap_echo "Disable Gatekeeper:   [%s]" "$GATEKEEPER_DISABLE"
 bootstrap_echo "macos defaults file:  [%s]" "$MACOS_URL"
 bootstrap_echo "Passphrase            [%s]" "$PASSPHRASE"
 printf '\n'
-printf 'Continue? (y/N) \n>_ '
-read -r REPLY
-if [[ ! $REPLY =~ ^[Yy]$   ]]; then
-  bootstrap_echo "Exit on demand"
-  exit 0
+if ! $QUIET; then
+  printf 'Continue? (y/N) \n>_ '
+  read -r REPLY
+  if [[ ! $REPLY =~ ^[Yy]$   ]]; then
+    bootstrap_echo "Exit on demand"
+    exit 0
+  fi
 fi
 
 set -e
@@ -231,8 +243,8 @@ brew "pcre"
 brew "readline"
 brew "sqlite"
 brew "xz"
-brew "python"
-brew "ansible"
+#brew "python@3.9"
+#brew "ansible"
 brew "autoconf"
 brew "automake"
 brew "bat"
@@ -267,14 +279,14 @@ brew "hugo"
 brew "libgit2"
 brew "libmypaint"
 brew "libressl"
-brew "ncdu"
+#brew "ncdu"
 brew "node"
 brew "nvm"
 brew "openfortivpn"
 brew "openssh"
 brew "p7zip"
 brew "pandoc"
-brew "pandoc-citeproc"
+#brew "pandoc-citeproc"
 brew "py2cairo"
 brew "pygobject3"
 brew "ruby-build"
@@ -290,7 +302,7 @@ brew "tmux"
 brew "tree"
 brew "vifm"
 brew "vim"
-brew "wget"
+#brew "wget"
 brew "youtube-dl"
 brew "jez/formulae/pandoc-sidenote"
 EOF
@@ -312,11 +324,11 @@ cask "appcleaner"
 cask "basictex"
 cask "brave-browser"
 cask "calibre"
-cask "countdown"
-cask "epoch-flip-clock"
-cask "font-saucecodepro-nerd-font"
+#cask "countdown"
+#cask "epoch-flip-clock"
+cask "font-sauce-code-pro-nerd-font"
 cask "fork"
-cask "grid-clock"
+#cask "grid-clock"
 cask "imageoptim"
 cask "kitty"
 cask "onyx"
@@ -330,8 +342,8 @@ cask "veracrypt"
 #cask "virtualbox"
 cask "visual-studio-code"
 cask "vlc"
-cask "xquartz"
-cask "zoomus"
+#cask "xquartz"
+cask "zoom"
 brew "encfs"
 brew "ntfs-3g"
 EOF
@@ -367,7 +379,7 @@ bootstrap_done "$((step++))"
 ################################################################################
 bootstrap_echo "Step $step: Install or upgrade and then reload dotfiles"
 if [ ! -d "$HOME/.cfg/" ]; then
-  curl -Lks https://bit.ly/2WCZ49 | zsh
+  curl -fsSOk https://bitbucket.org/!api/2.0/snippets/deild/Gr7nX9/c752be0b868270dbda0959e845eabfa59995c5ce/files/home-cfg.sh | bash
 else
   git --git-dir="$HOME/.cfg/" --work-tree="$HOME" checkout
 fi
@@ -387,8 +399,13 @@ bootstrap_done "$((step++))"
 ###############################################################################
 bootstrap_echo "Step $step: Generate ed25519 and RSA key"
 
-[ ! -f ~/.ssh/id_ed25519 ] && ssh-keygen -t ed25519 -a 100 -q -N "$PASSPHRASE"
-[ ! -f ~/.ssh/id_rsa ] && ssh-keygen -t rsa -b 4096 -o -a 100 -q -N "$PASSPHRASE"
+if ! $QUIET; then
+  [ ! -f ~/.ssh/id_ed25519 ] && ssh-keygen -t ed25519 -a 100 -q -N "$PASSPHRASE"
+  [ ! -f ~/.ssh/id_rsa ] && ssh-keygen -t rsa -b 4096 -o -a 100 -q -N "$PASSPHRASE"
+else
+  [ ! -f ~/.ssh/id_ed25519 ] && ssh-keygen -t ed25519 -a 100 -q -N "$PASSPHRASE" -f ~/.ssh/id_ed25519
+  [ ! -f ~/.ssh/id_rsa ] && ssh-keygen -t rsa -b 4096 -o -a 100 -q -N "$PASSPHRASE" -f ~/.ssh/id_rsa
+fi
 
 bootstrap_done "$((step++))"
 
