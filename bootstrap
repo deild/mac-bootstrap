@@ -225,6 +225,8 @@ bootstrap_done "$((step++))"
 if ! command -v rustup; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 fi
+cargo install -q -- cargo-outdated
+cargo install -q -- cargo-release
 
 ###############################################################################
 # Homebrew formula
