@@ -6,16 +6,15 @@
 
 > Forked & Inspired by from [joshukraine's mac-bootstrap]
 
-Bootstrap is a script to provision a new machine running a fresh install of macOS ([Catalina 10.15]).
+Bootstrap is a script to provision a new machine running a fresh install of ([macOS Big Sur]).
 
 It can be run multiple times on the same machine safely. It installs, upgrades, or skips packages based on what is already installed on the machine.
 
 The [bootstrap] script is very specific to the Mac platform.
 Version 1.x has been successfully tested on the following versions of macOS:
 
+- Big Sur (11.0)
 - Catalina (10.15)
-- Mojave (10.14)
-- High Sierra (10.13)
 
 Older versions may work but are not tested regularly.
 Bug reports into a new [GitHub Issue] for older versions are welcome.
@@ -82,6 +81,6 @@ When you invoke `bootstrap`, here's what it does:
 [screenshot]: https://zupimages.net/up/20/23/s2o2.png
 [bootstrap]: https://github.com/deild/mac-bootstrap/blob/master/bootstrap
 [GitHub Issue]: https://github.com/deild/mac-bootstrap/issues/new
-[Catalina 10.15]: https://www.apple.com/macos/catalina/
+[macOS Big Sur]: https://www.apple.com/macos/big-sur/
 [Homebrew]: https://brew.sh/
 [dotfiles]: https://bitbucket.org/deild/home/wiki/Home
