@@ -37,7 +37,7 @@ DEFAULT_TIME_ZONE="Europe/Paris"
 ACTUAL_COMPUTER_NAME="$(scutil --get ComputerName)"
 HOMEBREW_PREFIX="/usr/local"
 GATEKEEPER_DISABLE="Yes"
-MACOS_DEFAULT_URL="https://raw.githubusercontent.com/deild/mac-bootstrap/master/macos-defaults"
+MACOS_DEFAULT_URL="https://raw.githubusercontent.com/deild/mac-bootstrap/main/macos-defaults"
 DEFAULT_PASSPHRASE=""
 QUIET=false
 

@@ -76,10 +76,10 @@ When you invoke `bootstrap`, here's what it does:
 1. Disable Homebrew analytics
 1. Set macOS [preferences]
 
-[preferences]: https://github.com/deild/mac-bootstrap/blob/master/macos-defaults
+[preferences]: https://github.com/deild/mac-bootstrap/blob/main/macos-defaults
 [joshukraine's mac-bootstrap]: https://github.com/joshukraine/mac-bootstrap/blob/master/bootstrap
 [screenshot]: https://zupimages.net/up/20/23/s2o2.png
-[bootstrap]: https://github.com/deild/mac-bootstrap/blob/master/bootstrap
+[bootstrap]: https://github.com/deild/mac-bootstrap/blob/main/bootstrap
 [GitHub Issue]: https://github.com/deild/mac-bootstrap/issues/new
 [macOS Big Sur]: https://www.apple.com/macos/big-sur/
 [Homebrew]: https://brew.sh/
