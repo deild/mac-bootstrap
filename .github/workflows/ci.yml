@@ -7,9 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: 
-      - macos-11.0
-      - macos-10.15
+    runs-on: [macos-latest]
     steps:
       - uses: actions/checkout@v2
       # extract branch name
@@ -36,6 +34,4 @@ jobs:
           
       - name: install with one-liner bootstrap and relaunch
         run: |
-          set -o pipefail
-          curl -fsSO https://raw.githubusercontent.com/deild/mac-bootstrap/${BRANCH_NAME}/bootstrap && zsh bootstrap -q 2>&1 | tee ~/.bootstrap.log
-          curl -fsSO https://raw.githubusercontent.com/deild/mac-bootstrap/${BRANCH_NAME}/bootstrap | zsh -s -- -q 2>&1 | tee ~/.bootstrap.log
+          curl -fsS https://raw.githubusercontent.com/deild/mac-bootstrap/${BRANCH_NAME}/bootstrap | zsh -s -- -q 2>&1 | tee ~/.bootstrap.log

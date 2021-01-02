@@ -7,12 +7,10 @@ on:
 
 jobs:
   build:
-    runs-on: 
-      - macos-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - name: install dependencies
-        run: brew install shellcheck shfmt
+      - run: brew install shellcheck shfmt
       - name: shellcheck
         run: shellcheck bootstrap
       - name: shfmt
